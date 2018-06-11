@@ -62,7 +62,7 @@ class GCodeRender(rs274.glcanon.GlCanonDraw):
 
         self._current_file = filename
         try:
-            # indicate the style of tool-changer 
+            # indicate the style of tool-changer
             random = int(self.inifile.find("EMCIO", "RANDOM_TOOLCHANGER") or 0)
             # create the object which handles the canonical motion callbacks (straight_feed, straight_traverse, arc_feed, rigid_tap, etc.)
             # StatCanon inherits from GLCanon, which will do the work for us here
@@ -83,7 +83,7 @@ class GCodeRender(rs274.glcanon.GlCanonDraw):
             initcode = self.inifile.find("RS274NGC", "RS274NGC_STARTUP_CODE") or ""
 
             # THIS IS WHERE IT ALL HAPPENS: load_preview will execute the code, call back to the canon with motion commands, and
-            # record a history of all the movements.   
+            # record a history of all the movements.
             result, seq = self.load_preview(filename, self.canon, unitcode, initcode)
             if result > gcode.MIN_ERROR:
                 self.report_gcode_error(result, seq, filename)
@@ -323,3 +323,18 @@ class GCodeRender(rs274.glcanon.GlCanonDraw):
         sys.stderr.write(error_msg)
 
         print error_msg
+
+if __name__ == '__main__':
+    import sys
+    if len(sys.argv) < 1:
+        sys.exit('Usage: GCodeReader.py ini_file [gcode_file]')
+
+    ini_file = sys.argv[1]
+    ngc_file = None
+
+    if len(sys.argv) > 2:
+        ngc_file = sys.argv[2]
+
+    r = GCodeRender(ini_file)
+    r.load(filename=ngc_file)
+    r.write_x3d('test.x3d')
