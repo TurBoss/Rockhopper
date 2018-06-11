@@ -45,7 +45,7 @@ class GCodeRender( rs274.glcanon.GlCanonDraw ):
 	    if self.stat.axis_mask & (1<<i) == 0: continue
 	    live_axis_count += 1
 	self.num_joints = int(self.inifile.find("TRAJ", "JOINTS") or live_axis_count)
-    
+
     # load a g-code file, simulate it
     def load(self,filename=None):
 
@@ -59,7 +59,7 @@ class GCodeRender( rs274.glcanon.GlCanonDraw ):
 
         self._current_file = filename
         try:
-            # indicate the style of tool-changer 
+            # indicate the style of tool-changer
             random = int(self.inifile.find("EMCIO", "RANDOM_TOOLCHANGER") or 0)
             # create the object which handles the canonical motion callbacks (straight_feed, straight_traverse, arc_feed, rigid_tap, etc.)
             # StatCanon inherits from GLCanon, which will do the work for us here
@@ -80,7 +80,7 @@ class GCodeRender( rs274.glcanon.GlCanonDraw ):
             initcode = self.inifile.find("RS274NGC", "RS274NGC_STARTUP_CODE") or ""
 
             # THIS IS WHERE IT ALL HAPPENS: load_preview will execute the code, call back to the canon with motion commands, and
-            # record a history of all the movements.   
+            # record a history of all the movements.
             result, seq = self.load_preview(filename, self.canon, unitcode, initcode)
 	    if result > gcode.MIN_ERROR:
 		self.report_gcode_error(result, seq, filename)
@@ -106,7 +106,7 @@ class GCodeRender( rs274.glcanon.GlCanonDraw ):
 
         mult = pow(10,fixed_point_precision)
         linecount = 0
-        
+
         # reduce size by limiting to 3 axes, and 4 digits of precision
         if (compact):
             obj['feed'] = []
@@ -115,7 +115,7 @@ class GCodeRender( rs274.glcanon.GlCanonDraw ):
                     break
                 obj['feed'].append( [ item[0], [ int(round(mult*item[1][0])), int(round(mult*item[1][1])), int(round(mult*item[1][2])) ], [ int(round(mult*item[2][0])), int(round(mult*item[2][1])), int(round(mult*item[2][2])) ], int(round(mult*item[3])), item[4] ] )
                 linecount = linecount + 1
-                
+
             obj['arcfeed'] = []
             for item in self.canon.arcfeed:
                 if (maxlines > 0 and linecount >= maxlines):
@@ -128,35 +128,35 @@ class GCodeRender( rs274.glcanon.GlCanonDraw ):
                 if (maxlines > 0 and linecount >= maxlines):
                     break
                 obj['traverse'].append( [ item[0], [ int(round(mult*item[1][0])), int(round(mult*item[1][1])), int(round(mult*item[1][2])) ], [ int(round(mult*item[2][0])), int(round(mult*item[2][1])), int(round(mult*item[2][2])) ], item[3] ] )
-                linecount = linecount + 1                
+                linecount = linecount + 1
 
         else:
-            obj['feed'] = []    
+            obj['feed'] = []
             for item in self.canon.feed:
                 if (maxlines > 0 and linecount >= maxlines):
                     break
                 obj['feed'].append( [ item[0], item[1], item[2], item[3] ] )
                 linecount = linecount + 1
-                
-            obj['arcfeed'] = []    
+
+            obj['arcfeed'] = []
             for item in self.canon.arcfeed:
                 if (maxlines > 0 and linecount >= maxlines):
                     break
                 obj['arcfeed'].append( [ item[0], item[1], item[2], item[3] ] )
                 linecount = linecount + 1
-                
+
             obj['traverse'] = []
             for item in self.canon.traverse:
                 if (maxlines > 0 and linecount >= maxlines):
                     break
                 obj['traverse'].append( [ item[0], item[1], item[2], item[3] ] )
-                linecount = linecount + 1                
+                linecount = linecount + 1
 
-        
+
         string = json.dumps( obj, separators=(',', ':') )
         print "Backplot size: ", len(string)
         return string
-            
+
 
     def write_x3d( self, filename ):
         f = open(filename,'w')
@@ -170,7 +170,7 @@ class GCodeRender( rs274.glcanon.GlCanonDraw ):
         f.write("<script type='text/javascript' src='http://www.x3dom.org/release/x3dom.js'></script>\n")
         f.write("<link rel='stylesheet' type='text/css' href='http://www.x3dom.org/download/x3dom.css'></link>\n")
         f.write('</head>\n')
-        
+
         body = xml.Element('body')
         X3D = xml.Element('X3D')
         X3D.attrib['xmlns']="http://www.web3d.org/specifications/x3d-namespace"
@@ -185,12 +185,12 @@ class GCodeRender( rs274.glcanon.GlCanonDraw ):
         X3D.append(scene)
 
         bg = xml.Element('Background')
-        bg.attrib['skyColor']='0 0 0'
+        bg.attrib['skyColor']='1 1 1'
         scene.append(bg)
 
         shape = xml.Element('Shape')
         scene.append(shape)
-        
+
         app = xml.Element('Appearance')
         mat = xml.Element('Material')
         mat.attrib['emissiveColor']='0 0 1'
@@ -219,7 +219,7 @@ class GCodeRender( rs274.glcanon.GlCanonDraw ):
 
         for item in self.canon.traverse:
             if (lastpnt == item[1][:3]):
-                coordstr = coordstr + " " + str(item[2][0]) + " " + str(item[2][1]) + " " + str(item[2][2]) 
+                coordstr = coordstr + " " + str(item[2][0]) + " " + str(item[2][1]) + " " + str(item[2][2])
                 idxnum = idxnum + 1
                 coordidxstr = coordidxstr + " " + str(idxnum)
             else:
@@ -227,13 +227,13 @@ class GCodeRender( rs274.glcanon.GlCanonDraw ):
                     coordidxstr = coordidxstr + " " + str(idxnum+1) + " " + str(idxnum+2)
                 else:
                     coordidxstr = coordidxstr + " -1 " + str(idxnum+1) + " " + str(idxnum+2)
-                coordstr = coordstr + " " + str(item[1][0]) + " " + str(item[1][1]) + " " + str(item[1][2]) + " " + str(item[2][0]) + " " + str(item[2][1]) + " " + str(item[2][2]) 
+                coordstr = coordstr + " " + str(item[1][0]) + " " + str(item[1][1]) + " " + str(item[1][2]) + " " + str(item[2][0]) + " " + str(item[2][1]) + " " + str(item[2][2])
                 idxnum = idxnum + 2
             lastpnt = item[2][:3]
-            
+
         for item in self.canon.feed:
             if (lastpnt == item[1][:3]):
-                coordstr = coordstr + " " + str(item[2][0]) + " " + str(item[2][1]) + " " + str(item[2][2]) 
+                coordstr = coordstr + " " + str(item[2][0]) + " " + str(item[2][1]) + " " + str(item[2][2])
                 idxnum = idxnum + 1
                 coordidxstr = coordidxstr + " " + str(idxnum)
             else:
@@ -241,7 +241,7 @@ class GCodeRender( rs274.glcanon.GlCanonDraw ):
                     coordidxstr = coordidxstr + " " + str(idxnum+1) + " " + str(idxnum+2)
                 else:
                     coordidxstr = coordidxstr + " -1 " + str(idxnum+1) + " " + str(idxnum+2)
-                coordstr = coordstr + " " + str(item[1][0]) + " " + str(item[1][1]) + " " + str(item[1][2]) + " " + str(item[2][0]) + " " + str(item[2][1]) + " " + str(item[2][2]) 
+                coordstr = coordstr + " " + str(item[1][0]) + " " + str(item[1][1]) + " " + str(item[1][2]) + " " + str(item[2][0]) + " " + str(item[2][1]) + " " + str(item[2][2])
                 idxnum = idxnum + 2
             lastpnt = item[2][:3]
 
@@ -266,7 +266,7 @@ class GCodeRender( rs274.glcanon.GlCanonDraw ):
 
         f.write('</html>')
         f.close()
-                
+
 
     def get_geometry(self):
         temp = self.inifile.find("DISPLAY", "GEOMETRY")
@@ -278,6 +278,20 @@ class GCodeRender( rs274.glcanon.GlCanonDraw ):
 
     def report_gcode_error(self, result, seq, filename):
 	error_str = gcode.strerror(result)
-	sys.stderr.write("G-Code error in " + os.path.basename(filename) + "\n" + "Near line " + str(seq) + " of\n" + filename + "\n" + error_str + "\n")    
-	print "G-Code error in " + os.path.basename(filename) + "\n" + "Near line " + str(seq) + " of\n" + filename + "\n" + error_str + "\n"    
-            
+	sys.stderr.write("G-Code error in " + os.path.basename(filename) + "\n" + "Near line " + str(seq) + " of\n" + filename + "\n" + error_str + "\n")
+	print "G-Code error in " + os.path.basename(filename) + "\n" + "Near line " + str(seq) + " of\n" + filename + "\n" + error_str + "\n"
+
+if __name__ == '__main__':
+    import sys
+    if len(sys.argv) < 1:
+        sys.exit('Usage: GCodeReader.py ini_file [gcode_file]')
+
+    ini_file = sys.argv[1]
+    ngc_file = None
+
+    if len(sys.argv) > 2:
+        ngc_file = sys.argv[2]
+
+    r = GCodeRender(ini_file)
+    r.load(filename=ngc_file)
+    r.write_x3d('test.x3d')
