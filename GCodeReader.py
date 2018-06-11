@@ -1,3 +1,4 @@
+#!/usr/bin/env python
 #
 # Copyright 2012, 2013 Machinery Science, LLC
 #
@@ -230,69 +231,49 @@ class GCodeRender(rs274.glcanon.GlCanonDraw):
 
             for item in self.canon.traverse:
                 if lastpnt == item[1][:3]:
-                    coordstr = "{} {} {} {}".format(coordstr, item[2][0], item[2][1], item[2][2])
+                    coordstr = "{0}  {item[2][0]} {item[2][1]} {item[2][2]}".format(coordstr, item=item)
                     idxnum = idxnum + 1
-                    coordidxstr = "{} {}".format(coordidxstr, idxnum)
+                    coordidxstr = "{0} {1}".format(coordidxstr, idxnum)
                 else:
                     if lastpnt is None:
-                        coordidxstr = "{} {} {}".format(coordidxstr, idxnum + 1, idxnum + 2)
+                        coordidxstr = coordidxstr + " " + str(idxnum + 1) + " " + str(idxnum + 2)
+                        coordidxstr = "{0} {1} {2}".format(coordidxstr, idxnum + 1, idxnum + 2)
                     else:
-                        coordidxstr = "{} -1 {} {}".format(coordidxstr, idxnum + 1, idxnum + 2)
+                        coordidxstr = "{0} -1 {1} {2}".format(coordidxstr, idxnum + 1, idxnum + 2)
 
-                    coordstr = "{} {} {} {} {} {}".format(
-                        item[1][0],
-                        item[1][1],
-                        item[1][2],
-                        item[2][0],
-                        item[2][1],
-                        item[2][2]
-                    )
+                    coordstr = "{0} {item[1][0]} {item[1][1]} {item[1][2]} {item[2][0]} {item[2][1]} {item[2][2]}".format(coordstr, item=item) # [1][0]) + " " + str(item[1][1]) + " " + str(
 
                     idxnum = idxnum + 2
                 lastpnt = item[2][:3]
 
             for item in self.canon.feed:
                 if lastpnt == item[1][:3]:
-                    coordstr = "{} {} {} {}".format(coordstr, item[2][0], item[2][1], item[2][2])
+                    coordstr = "{0}  {item[2][0]} {item[2][1]} {item[2][2]}".format(coordstr, item=item)
                     idxnum = idxnum + 1
-                    coordidxstr = "{} {}".format(coordidxstr, idxnum)
+                    coordidxstr = "{0} {1}".format(coordidxstr, idxnum)
                 else:
                     if lastpnt is None:
-                        coordidxstr = "{} {} {}".format(coordidxstr, idxnum + 1, idxnum + 2)
+                        coordidxstr = "{0} {1} {2}".format(coordidxstr, idxnum + 1, idxnum + 2)
                     else:
-                        coordidxstr = "{} -1 {} {}".format(coordidxstr, idxnum + 1, idxnum + 2)
+                        coordidxstr = "{0} -1 {1} {2}".format(coordidxstr, idxnum + 1, idxnum + 2)
 
-                    coordstr = "{} {} {} {} {} {}".format(
-                        item[1][0],
-                        item[1][1],
-                        item[1][2],
-                        item[2][0],
-                        item[2][1],
-                        item[2][2]
-                    )
+                    coordstr = "{0} {item[1][0]} {item[1][1]} {item[1][2]} {item[2][0]} {item[2][1]} {item[2][2]}".format(coordstr, item=item) # [1][0]) + " " + str(item[1][1]) + " " + str(
 
                     idxnum = idxnum + 2
                 lastpnt = item[2][:3]
 
             for item in self.canon.arcfeed:
                 if lastpnt == item[1][:3]:
-                    coordstr = "{} {} {} {}".format(coordstr, item[2][0], item[2][1], item[2][2])
+                    coordstr = "{0}  {item[2][0]} {item[2][1]} {item[2][2]}".format(coordstr, item=item)
                     idxnum = idxnum + 1
-                    coordidxstr = "{} {}".format(coordidxstr, idxnum)
+                    coordidxstr = "{0} {1}".format(coordidxstr, idxnum)
                 else:
                     if lastpnt is None:
-                        coordidxstr = "{} {} {}".format(coordidxstr, idxnum + 1, idxnum + 2)
+                        coordidxstr = "{0} {1} {2}".format(coordidxstr, idxnum + 1, idxnum + 2)
                     else:
-                        coordidxstr = "{} -1 {} {}".format(coordidxstr, idxnum + 1, idxnum + 2)
+                        coordidxstr = "{0} -1 {1} {2}".format(coordidxstr, idxnum + 1, idxnum + 2)
 
-                    coordstr = "{} {} {} {} {} {}".format(
-                        item[1][0],
-                        item[1][1],
-                        item[1][2],
-                        item[2][0],
-                        item[2][1],
-                        item[2][2]
-                    )
+                    coordstr = "{0} {item[1][0]} {item[1][1]} {item[1][2]} {item[2][0]} {item[2][1]} {item[2][2]}".format(coordstr, item=item) # [1][0]) + " " + str(item[1][1]) + " " + str(
 
                     idxnum = idxnum + 2
                 lastpnt = item[2][:3]

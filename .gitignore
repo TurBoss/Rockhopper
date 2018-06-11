@@ -4,3 +4,9 @@ venv/
 *.log
 
 *.pyc
+
+*.x3d
+
+*.var
+
+*.bak
