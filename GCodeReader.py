@@ -323,5 +323,3 @@ class GCodeRender(rs274.glcanon.GlCanonDraw):
         sys.stderr.write(error_msg)
 
         print error_msg
-        "\n" + "Near line " + str(
-            seq) + " of\n" + filename + "\n" + error_str + "\n"
