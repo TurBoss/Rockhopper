@@ -124,7 +124,7 @@ class GCodeRender(rs274.glcanon.GlCanonDraw):
 
             obj['arcfeed'] = []
             for item in self.canon.arcfeed:
-                if (maxlines > 0 and linecount >= maxlines):
+                if maxlines > 0 and linecount >= maxlines:
                     break
                 obj['arcfeed'].append([item[0], [int(round(mult * item[1][0])), int(round(mult * item[1][1])),
                                                  int(round(mult * item[1][2]))],
@@ -134,7 +134,7 @@ class GCodeRender(rs274.glcanon.GlCanonDraw):
 
             obj['traverse'] = []
             for item in self.canon.traverse:
-                if (maxlines > 0 and linecount >= maxlines):
+                if maxlines > 0 and linecount >= maxlines:
                     break
                 obj['traverse'].append([item[0], [int(round(mult * item[1][0])), int(round(mult * item[1][1])),
                                                   int(round(mult * item[1][2]))],
@@ -165,121 +165,144 @@ class GCodeRender(rs274.glcanon.GlCanonDraw):
                 linecount = linecount + 1
 
         string = json.dumps(obj, separators=(',', ':'))
-        print "Backplot size: ", len(string)
+        print "Backplot size: {}".format(len(string))
         return string
 
     def write_x3d(self, filename):
-        f = open(filename, 'w')
+        with open(filename, 'w') as f:
 
-        f.write(
-            '<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">\n')
-        f.write('<html xmlns="http://www.w3.org/1999/xhtml">\n')
-        f.write('<head>\n')
-        f.write('<meta http-equiv="X-UA-Compatible" content="chrome=1" />\n')
-        f.write('<meta http-equiv="Content-Type" content="text/html;charset=utf-8" />\n')
-        f.write('<title>LinuxCNC Rendered GCode File</title>\n')
-        f.write("<script type='text/javascript' src='http://www.x3dom.org/release/x3dom.js'></script>\n")
-        f.write("<link rel='stylesheet' type='text/css' href='http://www.x3dom.org/download/x3dom.css'></link>\n")
-        f.write('</head>\n')
+            f.write(
+                '<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">\n')
+            f.write('<html xmlns="http://www.w3.org/1999/xhtml">\n')
+            f.write('<head>\n')
+            f.write('<meta http-equiv="X-UA-Compatible" content="chrome=1" />\n')
+            f.write('<meta http-equiv="Content-Type" content="text/html;charset=utf-8" />\n')
+            f.write('<title>LinuxCNC Rendered GCode File</title>\n')
+            f.write("<script type='text/javascript' src='http://www.x3dom.org/release/x3dom.js'></script>\n")
+            f.write("<link rel='stylesheet' type='text/css' href='http://www.x3dom.org/download/x3dom.css'></link>\n")
+            f.write('</head>\n')
 
-        body = xml.Element('body')
-        X3D = xml.Element('X3D')
-        X3D.attrib['xmlns'] = "http://www.web3d.org/specifications/x3d-namespace"
-        X3D.attrib['showStat'] = "false"
-        X3D.attrib['showLog'] = "false"
-        X3D.attrib['x'] = "0px"
-        X3D.attrib['y'] = "0px"
-        X3D.attrib['width'] = "600px"
-        X3D.attrib['height'] = "600px"
-        body.append(X3D)
-        scene = xml.Element('Scene')
-        X3D.append(scene)
+            body = xml.Element('body')
+            X3D = xml.Element('X3D')
+            X3D.attrib['xmlns'] = "http://www.web3d.org/specifications/x3d-namespace"
+            X3D.attrib['showStat'] = "false"
+            X3D.attrib['showLog'] = "false"
+            X3D.attrib['x'] = "0px"
+            X3D.attrib['y'] = "0px"
+            X3D.attrib['width'] = "600px"
+            X3D.attrib['height'] = "600px"
+            body.append(X3D)
+            scene = xml.Element('Scene')
+            X3D.append(scene)
 
-        bg = xml.Element('Background')
-        bg.attrib['skyColor'] = '0 0 0'
-        scene.append(bg)
+            bg = xml.Element('Background')
+            bg.attrib['skyColor'] = '0 0 0'
+            scene.append(bg)
 
-        shape = xml.Element('Shape')
-        scene.append(shape)
+            shape = xml.Element('Shape')
+            scene.append(shape)
 
-        app = xml.Element('Appearance')
-        mat = xml.Element('Material')
-        mat.attrib['emissiveColor'] = '0 0 1'
-        mat.attrib['diffuseColor'] = '0 1 0'
-        lp = xml.Element('LineProperties')
-        lp.attrib['linetype'] = '1'
-        lp.attrib['applied'] = 'true'
-        lp.attrib['linewidthScaleFactor'] = '1'
-        app.append(mat)
-        app.append(lp)
-        shape.append(app)
+            app = xml.Element('Appearance')
+            mat = xml.Element('Material')
+            mat.attrib['emissiveColor'] = '0 0 1'
+            mat.attrib['diffuseColor'] = '0 1 0'
+            lp = xml.Element('LineProperties')
+            lp.attrib['linetype'] = '1'
+            lp.attrib['applied'] = 'true'
+            lp.attrib['linewidthScaleFactor'] = '1'
+            app.append(mat)
+            app.append(lp)
+            shape.append(app)
 
-        vp = xml.Element('Viewpoint')
-        vp.attrib['position'] = "0 0 20"
-        scene.append(vp)
+            vp = xml.Element('Viewpoint')
+            vp.attrib['position'] = "0 0 20"
+            scene.append(vp)
 
-        lineset = xml.Element('IndexedLineSet')
-        coords = xml.Element('Coordinate')
-        lineset.append(coords)
-        shape.append(lineset)
+            lineset = xml.Element('IndexedLineSet')
+            coords = xml.Element('Coordinate')
+            lineset.append(coords)
+            shape.append(lineset)
 
-        coordstr = ""
-        coordidxstr = ""
-        idxnum = -1
-        lastpnt = None
+            coordstr = ""
+            coordidxstr = ""
+            idxnum = -1
+            lastpnt = None
 
-        for item in self.canon.traverse:
-            if lastpnt == item[1][:3]:
-                coordstr = coordstr + " " + str(item[2][0]) + " " + str(item[2][1]) + " " + str(item[2][2])
-                idxnum = idxnum + 1
-                coordidxstr = coordidxstr + " " + str(idxnum)
-            else:
-                if lastpnt is None:
-                    coordidxstr = coordidxstr + " " + str(idxnum + 1) + " " + str(idxnum + 2)
+            for item in self.canon.traverse:
+                if lastpnt == item[1][:3]:
+                    coordstr = "{} {} {} {}".format(coordstr, item[2][0], item[2][1], item[2][2])
+                    idxnum = idxnum + 1
+                    coordidxstr = "{} {}".format(coordidxstr, idxnum)
                 else:
-                    coordidxstr = coordidxstr + " -1 " + str(idxnum + 1) + " " + str(idxnum + 2)
-                coordstr = coordstr + " " + str(item[1][0]) + " " + str(item[1][1]) + " " + str(item[1][2]) + " " + str(
-                    item[2][0]) + " " + str(item[2][1]) + " " + str(item[2][2])
-                idxnum = idxnum + 2
-            lastpnt = item[2][:3]
+                    if lastpnt is None:
+                        coordidxstr = "{} {} {}".format(coordidxstr, idxnum + 1, idxnum + 2)
+                    else:
+                        coordidxstr = "{} -1 {} {}".format(coordidxstr, idxnum + 1, idxnum + 2)
 
-        for item in self.canon.feed:
-            if lastpnt == item[1][:3]:
-                coordstr = coordstr + " " + str(item[2][0]) + " " + str(item[2][1]) + " " + str(item[2][2])
-                idxnum = idxnum + 1
-                coordidxstr = coordidxstr + " " + str(idxnum)
-            else:
-                if lastpnt is None:
-                    coordidxstr = coordidxstr + " " + str(idxnum + 1) + " " + str(idxnum + 2)
+                    coordstr = "{} {} {} {} {} {}".format(
+                        item[1][0],
+                        item[1][1],
+                        item[1][2],
+                        item[2][0],
+                        item[2][1],
+                        item[2][2]
+                    )
+
+                    idxnum = idxnum + 2
+                lastpnt = item[2][:3]
+
+            for item in self.canon.feed:
+                if lastpnt == item[1][:3]:
+                    coordstr = "{} {} {} {}".format(coordstr, item[2][0], item[2][1], item[2][2])
+                    idxnum = idxnum + 1
+                    coordidxstr = "{} {}".format(coordidxstr, idxnum)
                 else:
-                    coordidxstr = coordidxstr + " -1 " + str(idxnum + 1) + " " + str(idxnum + 2)
-                coordstr = coordstr + " " + str(item[1][0]) + " " + str(item[1][1]) + " " + str(item[1][2]) + " " + str(
-                    item[2][0]) + " " + str(item[2][1]) + " " + str(item[2][2])
-                idxnum = idxnum + 2
-            lastpnt = item[2][:3]
+                    if lastpnt is None:
+                        coordidxstr = "{} {} {}".format(coordidxstr, idxnum + 1, idxnum + 2)
+                    else:
+                        coordidxstr = "{} -1 {} {}".format(coordidxstr, idxnum + 1, idxnum + 2)
 
-        for item in self.canon.arcfeed:
-            if lastpnt == item[1][:3]:
-                coordstr = coordstr + " " + str(item[2][0]) + " " + str(item[2][1]) + " " + str(item[2][2])
-                idxnum = idxnum + 1
-                coordidxstr = coordidxstr + " " + str(idxnum)
-            else:
-                if lastpnt is None:
-                    coordidxstr = coordidxstr + " " + str(idxnum + 1) + " " + str(idxnum + 2)
+                    coordstr = "{} {} {} {} {} {}".format(
+                        item[1][0],
+                        item[1][1],
+                        item[1][2],
+                        item[2][0],
+                        item[2][1],
+                        item[2][2]
+                    )
+
+                    idxnum = idxnum + 2
+                lastpnt = item[2][:3]
+
+            for item in self.canon.arcfeed:
+                if lastpnt == item[1][:3]:
+                    coordstr = "{} {} {} {}".format(coordstr, item[2][0], item[2][1], item[2][2])
+                    idxnum = idxnum + 1
+                    coordidxstr = "{} {}".format(coordidxstr, idxnum)
                 else:
-                    coordidxstr = coordidxstr + " -1 " + str(idxnum + 1) + " " + str(idxnum + 2)
-                coordstr = coordstr + " " + str(item[1][0]) + " " + str(item[1][1]) + " " + str(item[1][2]) + " " + str(
-                    item[2][0]) + " " + str(item[2][1]) + " " + str(item[2][2])
-                idxnum = idxnum + 2
-            lastpnt = item[2][:3]
+                    if lastpnt is None:
+                        coordidxstr = "{} {} {}".format(coordidxstr, idxnum + 1, idxnum + 2)
+                    else:
+                        coordidxstr = "{} -1 {} {}".format(coordidxstr, idxnum + 1, idxnum + 2)
 
-        coords.attrib['point'] = coordstr
-        lineset.attrib['coordIndex'] = coordidxstr
+                    coordstr = "{} {} {} {} {} {}".format(
+                        item[1][0],
+                        item[1][1],
+                        item[1][2],
+                        item[2][0],
+                        item[2][1],
+                        item[2][2]
+                    )
 
-        xml.ElementTree(body).write(f)
+                    idxnum = idxnum + 2
+                lastpnt = item[2][:3]
 
-        f.write('</html>')
-        f.close()
+            coords.attrib['point'] = coordstr
+            lineset.attrib['coordIndex'] = coordidxstr
+
+            xml.ElementTree(body).write(f)
+
+            f.write('</html>')
 
     def get_geometry(self):
         temp = self.inifile.find("DISPLAY", "GEOMETRY")
@@ -291,7 +314,14 @@ class GCodeRender(rs274.glcanon.GlCanonDraw):
 
     def report_gcode_error(self, result, seq, filename):
         error_str = gcode.strerror(result)
-        sys.stderr.write("G-Code error in " + os.path.basename(filename) + "\n" + "Near line " + str(
-            seq) + " of\n" + filename + "\n" + error_str + "\n")
-        print "G-Code error in " + os.path.basename(filename) + "\n" + "Near line " + str(
+
+        error_msg = "G-Code error in {}\nNear line {} of\n{}\n{}\n".format(os.path.basename(filename),
+                                                                           seq,
+                                                                           filename,
+                                                                           error_str)
+
+        sys.stderr.write(error_msg)
+
+        print error_msg
+        "\n" + "Near line " + str(
             seq) + " of\n" + filename + "\n" + error_str + "\n"
